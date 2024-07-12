@@ -61,27 +61,11 @@
             left: 0%;
             transform: translateX(-50.25%);
         }
-
-        .edit-area {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            cursor: pointer;
-            background-color: rgba(0, 0, 0, 0); /* Fully transparent */
-            transition: background-color 0.1s ease; /* Smooth transition for background color */
-        }
-        .edit-area:hover {
-            background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white on hover */
-        }
     </style>
 </head>
 <body>
-    <div class="edit-area" onclick="changeStationName()">
-    </div>
-    <div class="station-box" id="stationName" onclick="editText('stationName')">
-        Click to edit station name
+    <div class="station-box" id="stationName">
+        CAR Station Notices
     </div>
     <div class="message-box" id="nrccMessages" onclick="editText('nrccMessages')">
         Click to edit NRCC messages
@@ -90,7 +74,7 @@
     </div>
 
     <script>
-        let currentStationCode = 'EDB'; // Default station code is set to Edinburgh (EDB)
+        let currentStationCode = 'EDB'; // Default station code is always 'CAR'
         const fallbackMessages = [
             "Please do not leave luggage or belongings unattended anywhere on this station. Any unattended articles are likely to be removed or destroyed without warning.",
             "If you see something that looks unusual, speak to station staff or text the British Transport Police on 61016. We'll sort it. See it. Say it. Sorted."
@@ -179,24 +163,14 @@
             }
         }
 
-        // Function to change station name based on user input
-        function changeStationName() {
-            const newStation = prompt('Enter new station name:');
-            if (newStation !== null && newStation !== '') {
-                currentStationCode = newStation.trim().toUpperCase();
-                clearInterval(fallbackInterval); // Clear any existing fallback interval
-                fetchNRCCMessages(); // Fetch messages for the new station
-            }
-        }
-
         // Initial call to update date and time when the page loads
         updateDateTime();
 
-        // Set initial station to Edinburgh (EDB)
-        fetchNRCCMessages();
-
         // Update date and time every second
         setInterval(updateDateTime, 1000);
+
+        // Initial fetch of NRCC messages when the page loads
+        fetchNRCCMessages();
     </script>
 </body>
 </html>

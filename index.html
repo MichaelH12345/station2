@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NRCC Messages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://raw.githubusercontent.com/MichaelH12345/fonts/main/Info2.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .message-box {
+            position: absolute;
+            font-family: 'Noto Sans', sans-serif;
+            color: white;
+            font-size: 125px;
+            width: 3000px;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+            cursor: pointer;
+            top: 50%;
+            left: 0;
+            transform: translate(-50.25%, -50%);
+        }
+        .time-box {
+            position: absolute;
+            font-family: 'Noto Sans', sans-serif;
+            color: white;
+            font-size: 75px;
+            padding: 20px;
+            text-align: center;
+            cursor: default;
+            bottom: 75px; /* 50 pixels from the bottom */
+            right: 100px; /* 50 pixels from the right */
+        }
+
+        .station-box {
+            position: absolute;
+            font-family: 'Noto Sans', sans-serif;
+            color: white;
+            font-size: 75px;
+            width: 3000px;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+            cursor: pointer;
+            top: 5%;
+            left: 0%;
+            transform: translateX(-50.25%);
+        }
+
+        .edit-area {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0); /* Fully transparent */
+            transition: background-color 0.1s ease; /* Smooth transition for background color */
+        }
+        .edit-area:hover {
+            background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-area" onclick="changeStationName()">
+    </div>
+    <div class="station-box" id="stationName" onclick="editText('stationName')">
+        Click to edit station name
+    </div>
+    <div class="message-box" id="nrccMessages" onclick="editText('nrccMessages')">
+        Click to edit NRCC messages
+    </div>
+    <div class="time-box" id="currentDateTime">
+    </div>
+
+    <script>
+        let currentStationCode = 'EDB'; // Default station code is set to Edinburgh (EDB)
+        const fallbackMessages = [
+            "Please do not leave luggage or belongings unattended anywhere on this station. Any unattended articles are likely to be removed or destroyed without warning.",
+            "If you see something that looks unusual, speak to station staff or text the British Transport Police on 61016. We'll sort it. See it. Say it. Sorted."
+        ];
+        let currentFallbackIndex = 0;
+        let fallbackInterval;
+
+        // Function to update the date and time every second
+        function updateDateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const formattedTime = `${hours}:${minutes}:${seconds}`;
+            
+            document.getElementById('currentDateTime').innerText = formattedTime;
+        }
+
+        // Function to update the NRCC messages
+        async function fetchNRCCMessages() {
+            try {
+                const response = await fetch(`https://national-rail-api.davwheat.dev/staffdepartures/${currentStationCode}?expand=true`);
+                const data = await response.json();
+                
+                // Get the station name and update the station box
+                let stationName = data.locationName;
+                stationName = stationName.replace(/[\(\)]/g, ''); // Remove brackets
+                document.getElementById('stationName').innerText = `${stationName} Station Notices`;
+                
+                let nrccMessages = data.nrccMessages;
+                
+                const messageBox = document.getElementById('nrccMessages');
+                
+                if (nrccMessages.length > 0) {
+                    clearInterval(fallbackInterval);
+                    let currentIndex = 0;
+                    let message = nrccMessages[currentIndex].xhtmlMessage;
+
+                    // Replace 'More details' and everything after it with ''
+                    const moreDetailsIndex = message.indexOf('More details');
+                    if (moreDetailsIndex !== -1) {
+                        message = message.substring(0, moreDetailsIndex) + '';
+                    }
+
+                    messageBox.innerHTML = message;
+
+                    if (nrccMessages.length > 1) {
+                        setInterval(() => {
+                            currentIndex = (currentIndex + 1) % nrccMessages.length;
+                            let message = nrccMessages[currentIndex].xhtmlMessage;
+
+                            // Replace 'More details' and everything after it with ''
+                            const moreDetailsIndex = message.indexOf('More details');
+                            if (moreDetailsIndex !== -1) {
+                                message = message.substring(0, moreDetailsIndex) + '';
+                            }
+
+                            messageBox.innerHTML = message;
+                        }, 15000); // 15000 milliseconds = 15 seconds
+                    }
+                } else {
+                    cycleFallbackMessages();
+                }
+            } catch (error) {
+                cycleFallbackMessages();
+            }
+        }
+
+        // Function to cycle through fallback messages every 15 seconds
+        function cycleFallbackMessages() {
+            const messageBox = document.getElementById('nrccMessages');
+            messageBox.innerHTML = fallbackMessages[currentFallbackIndex];
+            fallbackInterval = setInterval(() => {
+                currentFallbackIndex = (currentFallbackIndex + 1) % fallbackMessages.length;
+                messageBox.innerHTML = fallbackMessages[currentFallbackIndex];
+            }, 15000);
+        }
+
+        // Function to handle editing text permanently
+        function editText(elementId) {
+            const element = document.getElementById(elementId);
+            const newText = prompt('Enter new text:');
+            if (newText !== null && newText !== '') {
+                element.innerText = newText;
+            }
+        }
+
+        // Function to change station name based on user input
+        function changeStationName() {
+            const newStation = prompt('Enter new station name:');
+            if (newStation !== null && newStation !== '') {
+                currentStationCode = newStation.trim().toUpperCase();
+                clearInterval(fallbackInterval); // Clear any existing fallback interval
+                fetchNRCCMessages(); // Fetch messages for the new station
+            }
+        }
+
+        // Initial call to update date and time when the page loads
+        updateDateTime();
+
+        // Set initial station to Edinburgh (EDB)
+        fetchNRCCMessages();
+
+        // Update date and time every second
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+</html>

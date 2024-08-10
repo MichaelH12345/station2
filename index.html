@@ -139,7 +139,7 @@
         .footer {
             background-color: grey;
             color: yellow;
-            height: 100px;
+            height: 125px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -222,9 +222,18 @@
         return text;
     }
 
+    // Function to truncate calling point text to a maximum length of 14 characters
+    function truncateCallingPoint(text) {
+        if (text.length > 17) { // Check if the length exceeds 17 characters
+            return text.substring(0, 14) + '...';
+        }
+        return text;
+    }
+
     // Variable to store previous calling points and subsequent locations for comparison
     let previousCallingPoints = [];
     let previousSubsequentLocations = [];
+    let previousDestinations = []; // Track previous destinations
 
     // Function to fetch and update both departures and calling points
     async function updateDepartures(crsCode) {
@@ -310,18 +319,15 @@
                                 // Use ETA for the last calling point, otherwise use STD
                                 const timeToShow = loc === service.subsequentLocations[service.subsequentLocations.length - 1] ? eta : std;
 
-                                // Truncate the location name if necessary
-                                const truncatedName = truncateText(cleanedName, 17);
-
-                                return `${truncatedName} (${timeToShow})`;
+                                return `${truncateCallingPoint(cleanedName)} (${timeToShow})`;
                             });
 
-                        // Compare current calling points with the previous ones
-                        if (!arraysEqual(previousSubsequentLocations[index] || [], currentSubsequentLocations)) {
-                            previousSubsequentLocations[index] = currentSubsequentLocations;
+                        // Compare current destinations with the previous ones
+                        if (previousDestinations[index] !== destination) {
+                            previousDestinations[index] = destination;
 
                             // Split calling points into pages
-                            const pageSize = 10;
+                            const pageSize = 9;
                             const pages = [];
                             for (let i = 0; i < currentSubsequentLocations.length; i += pageSize) {
                                 pages.push(currentSubsequentLocations.slice(i, i + pageSize));
@@ -335,13 +341,16 @@
 
                             updateCallingPoints(); // Initial call to show the first page
 
-                            // Update calling points every 10 seconds
-                            if (!section.hasAttribute('data-interval')) {
-                                section.setAttribute('data-interval', setInterval(() => {
-                                    pages.push(pages.shift()); // Move the first page to the end
-                                    updateCallingPoints();
-                                }, 10000));
+                            // Clear previous interval
+                            if (section.hasAttribute('data-interval')) {
+                                clearInterval(Number(section.getAttribute('data-interval')));
                             }
+
+                            // Set a new interval to update calling points every 10 seconds
+                            section.setAttribute('data-interval', setInterval(() => {
+                                pages.push(pages.shift()); // Move the first page to the end
+                                updateCallingPoints();
+                            }, 10000));
                         }
 
                         // Operator

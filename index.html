@@ -3,174 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NRCC Messages</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@600&display=swap" rel="stylesheet">
+    <title>Departure Board Layout</title>
     <style>
-        body, html {
+        /* Load the custom font */
+        @font-face {
+            font-family: 'BlackBox';
+            src: url('https://raw.githubusercontent.com/MichaelH12345/Departures1/main/BlackBox_Font.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* Hide scrollbars for the entire page */
+        html, body {
+            overflow: hidden; /* Hide scrollbars */
             margin: 0;
             padding: 0;
-            height: 100%;
             width: 100%;
-            overflow: hidden;
+            height: 100%;
+            background-color: black; /* Set background to black */
+            display: flex;
+            font-family: 'BlackBox', sans-serif; /* Apply the custom font */
+            flex-direction: column; /* Ensure the footer is pushed to the bottom */
+        }
+
+        /* Container to hold the 3 sections */
+        .container {
+            display: flex;
+            width: 100%;
+            height: calc(100% - 100px); /* Adjust height to accommodate footer */
+        }
+
+        /* Each section takes up one-third of the container width */
+        .section {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            padding: 25px; /* Padding for text positioning */
+            color: white; /* Default text color */
+            box-sizing: border-box;
+        }
+
+        /* Add a vertical line on the right side of the first and second sections */
+        .section:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 2px; /* Thickness of the line */
+            height: 100%;
+            background-color: grey; /* Grey color for the line */
+        }
+
+        /* Styling for the platform text */
+        .platform {
+            color: yellow;
+            font-size: 50px;
+        }
+
+        /* Styling for the time text */
+        .time-container {
+            display: flex;
+            align-items: center;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .time {
+            font-size: 70px;
+        }
+
+        /* Styling for the status box */
+        .status-box {
+            font-size: 40px;
+            font-weight: bold;
+            padding: 0 20px;
+            border-radius: 10px;
+            line-height: 70px; 
+            height: 70px;
+            width: 225px; /* Fixed width */
+            text-align: center;
+            margin-left: 20px;
+            position: absolute;
+            right: 0px; /* Position 25px from the right of the section */
+            top: 0; /* Align with the time */
+        }
+
+        /* Styling for the destination text */
+        .destination {
+            font-size: 70px;
+            white-space: pre-wrap; /* Preserve formatting */
+            line-height: 1.2;
+        }
+
+        /* Container for the TOC and carriages info */
+        .info {
+            position: absolute;
+            top: 375px; /* Position 200px from the top of the section */
+            left: 25px; /* Align with the padding of the section */
+            right: 25px; /* Maintain padding on the right side */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 35px;
+        }
+
+        /* Yellow color for the carriages info */
+        .carriages {
+            color: yellow;
+        }
+
+        /* Styling for the TOC info */
+        .toc {
+            color: grey;
+        }
+
+        /* Styling for no data in carriages */
+        .no-data {
+            color: black;
+        }
+
+        /* Styling for the calling points text box */
+        .calling-points {
+            position: absolute;
+            top: 425px; /* 100px from the top of the section */
+            left: 25px; /* 25px from the left of the section */
+            width: calc(100% - 50px); /* Full width minus padding */
+            max-height: calc(100% - 150px); /* Ensure it doesn't overflow */
+            overflow: hidden; /* Remove scroll bar */
+            color: white;
+            font-size: 45px;
+            padding: 0; /* No padding */
+        }
+
+        /* Grey rectangle at the bottom of the page */
+        .footer {
+            background-color: grey;
+            color: yellow;
+            height: 100px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('https://raw.githubusercontent.com/MichaelH12345/fonts/main/Info2.png');
-            background-size: cover;
-            background-position: center;
-        }
-        .message-box {
-            position: absolute;
-            font-family: 'Noto Sans', sans-serif;
-            color: white;
-            font-size: 125px;
-            width: 3000px;
-            padding: 20px;
-            text-align: center;
-            overflow: hidden;
-            cursor: pointer;
-            top: 50%;
-            left: 0;
-            transform: translate(-50.25%, -50%);
-        }
-        .time-box {
-            position: absolute;
-            font-family: 'Noto Sans', sans-serif;
-            color: white;
-            font-size: 75px;
-            padding: 20px;
-            text-align: center;
-            cursor: default;
-            bottom: 75px; /* 50 pixels from the bottom */
-            right: 100px; /* 50 pixels from the right */
-        }
-
-        .station-box {
-            position: absolute;
-            font-family: 'Noto Sans', sans-serif;
-            color: white;
-            font-size: 75px;
-            width: 3000px;
-            padding: 20px;
-            text-align: center;
-            overflow: hidden;
-            cursor: pointer;
-            top: 5%;
-            left: 0%;
-            transform: translateX(-50.25%);
+            font-size: 75px; /* Adjusted font size */
+            font-weight: bold;
+            text-align: center; /* Center-align text */
+            position: absolute; /* Position it absolutely */
+            width: 1920px; /* Set width of the footer */
+            right: 0;
+            bottom: 0; /* Align it to the bottom */
         }
     </style>
 </head>
 <body>
-    <div class="station-box" id="stationName">
-        CAR Station Notices
+
+    <div class="container">
+        <!-- Section 1 -->
+        <div class="section" data-index="3">
+            <div class="platform"></div>
+            <div class="time-container">
+                <div class="time"></div>
+                <div class="status-box"></div>
+            </div>
+            <div class="destination"></div>
+            <div class="info">
+                <div class="toc"></div>
+                <div class="carriages"></div>
+            </div>
+            <div class="calling-points"></div> <!-- New text box for calling points -->
+        </div>
+        <!-- Section 2 -->
+        <div class="section" data-index="4">
+            <div class="platform"></div>
+            <div class="time-container">
+                <div class="time"></div>
+                <div class="status-box"></div>
+            </div>
+            <div class="destination"></div>
+            <div class="info">
+                <div class="toc"></div>
+                <div class="carriages"></div>
+            </div>
+            <div class="calling-points"></div> <!-- New text box for calling points -->
+        </div>
+        <!-- Section 3 -->
+        <div class="section" data-index="5">
+            <div class="platform"></div>
+            <div class="time-container">
+                <div class="time"></div>
+                <div class="status-box"></div>
+            </div>
+            <div class="destination"></div>
+            <div class="info">
+                <div class="toc"></div>
+                <div class="carriages"></div>
+            </div>
+            <div class="calling-points"></div> <!-- New text box for calling points -->
+        </div>
     </div>
-    <div class="message-box" id="nrccMessages" onclick="editText('nrccMessages')">
-        Click to edit NRCC messages
-    </div>
-    <div class="time-box" id="currentDateTime">
+
+    <!-- Grey footer with station name -->
+    <div class="footer" id="station-footer">
+        <span id="station-name">N/A</span>
     </div>
 
     <script>
-        let currentStationCode = 'CAR'; // Default station code is always 'CAR'
-        const fallbackMessages = [
-            "Please do not leave luggage or belongings unattended anywhere on this station. Any unattended articles are likely to be removed or destroyed without warning.",
-            "If you see something that looks unusual, speak to station staff or text the British Transport Police on 61016. We'll sort it. See it. Say it. Sorted."
-        ];
-        let currentFallbackIndex = 0;
-        let fallbackInterval;
+    // Function to format time into BST hours and minutes
+    function formatTime(timeString) {
+        if (!timeString) return 'N/A';
+        const date = new Date(timeString);
+        const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000 + 3600000); // Convert to local time and adjust for BST
+        return `${localDate.getHours().toString().padStart(2, '0')}:${localDate.getMinutes().toString().padStart(2, '0')}`;
+    }
 
-        // Function to update the date and time every second
-        function updateDateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            
-            const formattedTime = `${hours}:${minutes}:${seconds}`;
-            
-            document.getElementById('currentDateTime').innerText = formattedTime;
+    // Function to truncate text if it's longer than a given length
+    function truncateText(text, length) {
+        if (text.length > length) {
+            return text.substring(0, length) + '...';
         }
+        return text;
+    }
 
-        // Function to update the NRCC messages
-        async function fetchNRCCMessages() {
-            try {
-                const response = await fetch(`https://national-rail-api.davwheat.dev/staffdepartures/${currentStationCode}?expand=true`);
-                const data = await response.json();
-                
-                // Get the station name and update the station box
-                let stationName = data.locationName;
-                stationName = stationName.replace(/[\(\)]/g, ''); // Remove brackets
-                document.getElementById('stationName').innerText = `${stationName} Station Notices`;
-                
-                let nrccMessages = data.nrccMessages;
-                
-                const messageBox = document.getElementById('nrccMessages');
-                
-                if (nrccMessages.length > 0) {
-                    clearInterval(fallbackInterval);
-                    let currentIndex = 0;
-                    let message = nrccMessages[currentIndex].xhtmlMessage;
+    // Variable to store previous calling points and subsequent locations for comparison
+    let previousCallingPoints = [];
+    let previousSubsequentLocations = [];
 
-                    // Replace 'More details' and everything after it with ''
-                    const moreDetailsIndex = message.indexOf('More details');
-                    if (moreDetailsIndex !== -1) {
-                        message = message.substring(0, moreDetailsIndex) + '';
-                    }
+    // Function to fetch and update both departures and calling points
+    async function updateDepartures(crsCode) {
+        try {
+            console.log('Fetching data from API...');
+            const response = await fetch(`https://national-rail-api.davwheat.dev/staffdepartures/${crsCode}?expand=true`);
+            const data = await response.json();
 
-                    messageBox.innerHTML = message;
+            // Log the entire data to the console for debugging
+            console.log('API Data:', data);
 
-                    if (nrccMessages.length > 1) {
-                        setInterval(() => {
-                            currentIndex = (currentIndex + 1) % nrccMessages.length;
-                            let message = nrccMessages[currentIndex].xhtmlMessage;
+            // Update station name in the footer with "Railway Station" and a space after "Welcome to"
+            const stationName = data.locationName || 'N/A';
+            document.getElementById('station-name').textContent = `Welcome to ${stationName} Railway Station`;
 
-                            // Replace 'More details' and everything after it with ''
-                            const moreDetailsIndex = message.indexOf('More details');
-                            if (moreDetailsIndex !== -1) {
-                                message = message.substring(0, moreDetailsIndex) + '';
+            // Check if data has a property named 'trainServices'
+            if (data.trainServices && data.trainServices.length > 0) {
+                data.trainServices.forEach((service, index) => {
+                    const section = document.querySelector(`.section[data-index="${index}"]`);
+
+                    if (section) {
+                        // Platform
+                        const platform = service.platform ? `Platform ${service.platform}` : 'Platform N/A';
+                        section.querySelector('.platform').textContent = platform;
+                        console.log(`Platform for section ${index + 1}: ${platform}`);
+
+                        // Time
+                        const time = formatTime(service.std);
+                        section.querySelector('.time').textContent = time;
+                        console.log(`Time for section ${index + 1}: ${time}`);
+
+                        // Status
+                        const statusBox = section.querySelector('.status-box');
+                        const std = service.std ? new Date(service.std).getTime() : null;
+                        const etd = service.etd ? new Date(service.etd).getTime() : null;
+                        const etdFormatted = formatTime(service.etd); // Format ETD time for display
+
+                        const oneMinute = 60 * 1000; // 1 minute in milliseconds
+
+                        if (service.isCancelled) {
+                            statusBox.textContent = 'Cancelled';
+                            statusBox.style.backgroundColor = '#d4351c'; // Red background
+                            statusBox.style.color = 'white'; // White text
+                        } else if (etd !== null && std !== null) {
+                            if (etd > std) {
+                                statusBox.textContent = `Exp ${etdFormatted}`;
+                                statusBox.style.backgroundColor = '#d4351c'; // Red background
+                                statusBox.style.color = 'white'; // White text
+                            } else if (Math.abs(etd - std) <= oneMinute) {
+                                statusBox.textContent = 'On Time';
+                                statusBox.style.backgroundColor = 'white';
+                                statusBox.style.color = 'black';
+                            } else if (etd < std && std - etd <= 5 * oneMinute) { // Assuming "a few minutes" means up to 5 minutes
+                                statusBox.textContent = 'Arrived';
+                                statusBox.style.backgroundColor = 'white';
+                                statusBox.style.color = 'black';
+                            } else {
+                                statusBox.textContent = 'Arrived'; // Default status for other cases
+                                statusBox.style.backgroundColor = 'white'; // Red background
+                                statusBox.style.color = 'black'; // White text
+                            }
+                        } else {
+                            statusBox.textContent = 'N/A';
+                            statusBox.style.backgroundColor = 'white';
+                            statusBox.style.color = 'black';
+                        }
+                        console.log(`Status for section ${index + 1}: ${statusBox.textContent}`);
+
+                        // Destination
+                        const destination = service.destination && service.destination.length > 0 ? service.destination[0].locationName || 'N/A' : 'N/A';
+                        section.querySelector('.destination').textContent = destination;
+                        console.log(`Destination for section ${index + 1}: ${destination}`);
+
+                        // Calling Points
+                        const currentSubsequentLocations = service.subsequentLocations
+                            .filter(location => !location.isPass) // Only locations where isPass is false
+                            .map(loc => {
+                                // Remove text within brackets
+                                const cleanedName = loc.locationName.replace(/\s*\(.*?\)\s*/g, '');
+                                const std = formatTime(loc.std);
+                                const eta = formatTime(loc.eta);
+
+                                // Use ETA for the last calling point, otherwise use STD
+                                const timeToShow = loc === service.subsequentLocations[service.subsequentLocations.length - 1] ? eta : std;
+
+                                return `${cleanedName} (${timeToShow})`;
+                            });
+
+                        // Compare current calling points with the previous ones
+                        if (!arraysEqual(previousSubsequentLocations[index] || [], currentSubsequentLocations)) {
+                            previousSubsequentLocations[index] = currentSubsequentLocations;
+
+                            // Split calling points into pages
+                            const pageSize = 10;
+                            const pages = [];
+                            for (let i = 0; i < currentSubsequentLocations.length; i += pageSize) {
+                                pages.push(currentSubsequentLocations.slice(i, i + pageSize));
                             }
 
-                            messageBox.innerHTML = message;
-                        }, 15000); // 15000 milliseconds = 15 seconds
+                            // Update calling points
+                            function updateCallingPoints() {
+                                const page = pages[0] || [];
+                                section.querySelector('.calling-points').innerHTML = page.map(loc => `<div>${loc}</div>`).join('');
+                            }
+
+                            updateCallingPoints(); // Initial call to show the first page
+
+                            // Update calling points every 10 seconds
+                            if (!section.hasAttribute('data-interval')) {
+                                section.setAttribute('data-interval', setInterval(() => {
+                                    pages.push(pages.shift()); // Move the first page to the end
+                                    updateCallingPoints();
+                                }, 10000));
+                            }
+                        }
+
+                        // Operator
+                        let operator = service.operator || 'N/A';
+                        if (operator === 'West Midlands Trains') {
+                            operator = 'London Northwestern Railway';
+                        }
+                        if (operator !== 'TransPennine Express') {
+                            operator = truncateText(operator, 17);
+                        }
+                        section.querySelector('.toc').textContent = operator;
+                        console.log(`Operator for section ${index + 1}: ${operator}`);
+
+                        // Carriages (formation)
+                        let formation = null;
+
+                        // Check if formation and coaches array are available
+                        if (service.formation && service.formation.coaches) {
+                            // Count the number of coaches in the formation
+                            formation = service.formation.coaches.length;
+                        }
+
+                        // Fallback to the 'length' field if no valid formation found
+                        if (formation === null || formation === undefined) {
+                            formation = service.length;
+                        }
+
+                        // Determine the display message based on formation
+                        let displayText = '';
+                        let textColor = 'yellow'; // Default color
+
+                        if (formation === '0' || formation === null || formation === undefined) {
+                            displayText = 'No coach length data';
+                            textColor = 'black'; // Different color for "No data"
+                        } else {
+                            displayText = `${formation} carriages`;
+                        }
+
+                        // Set carriages text and color
+                        section.querySelector('.carriages').style.color = textColor;
+                        section.querySelector('.carriages').textContent = displayText;
+                        console.log(`Formation for section ${index + 1}: ${displayText}`);
+                    } else {
+                        console.log(`No data available for section ${index + 1}`);
                     }
-                } else {
-                    cycleFallbackMessages();
-                }
-            } catch (error) {
-                cycleFallbackMessages();
+                });
+            } else {
+                console.log('No train services available.');
             }
+        } catch (error) {
+            console.error('Error fetching departures data:', error);
         }
+    }
 
-        // Function to cycle through fallback messages every 15 seconds
-        function cycleFallbackMessages() {
-            const messageBox = document.getElementById('nrccMessages');
-            messageBox.innerHTML = fallbackMessages[currentFallbackIndex];
-            fallbackInterval = setInterval(() => {
-                currentFallbackIndex = (currentFallbackIndex + 1) % fallbackMessages.length;
-                messageBox.innerHTML = fallbackMessages[currentFallbackIndex];
-            }, 15000);
+    // Helper function to check if two arrays are equal
+    function arraysEqual(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) return false;
         }
+        return true;
+    }
 
-        // Function to handle editing text permanently
-        function editText(elementId) {
-            const element = document.getElementById(elementId);
-            const newText = prompt('Enter new text:');
-            if (newText !== null && newText !== '') {
-                element.innerText = newText;
-            }
+    // Function to start updating both the departures and calling points
+    function startUpdating(crsCode) {
+        // Initial update
+        updateDepartures(crsCode);
+        // Set an interval to update every 10 seconds
+        setInterval(() => updateDepartures(crsCode), 10000);
+    }
+
+    // Prompt the user for a CRS code on page load
+    window.onload = function() {
+        const crsCode = prompt("Please enter the station CRS code (e.g., 'EUS'):");
+        if (crsCode) {
+            startUpdating(crsCode); // Start updating departures and calling points for the entered CRS code
+        } else {
+            console.log('No CRS code entered. The page will not display data.');
         }
-
-        // Initial call to update date and time when the page loads
-        updateDateTime();
-
-        // Update date and time every second
-        setInterval(updateDateTime, 1000);
-
-        // Initial fetch of NRCC messages when the page loads
-        fetchNRCCMessages();
+    };
     </script>
+
 </body>
 </html>

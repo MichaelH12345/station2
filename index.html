@@ -237,8 +237,8 @@
             console.log('API Data:', data);
 
             // Update station name in the footer with "Railway Station" and a space after "Welcome to"
-            const stationName = data.locationName || 'N/A';
-            document.getElementById('station-name').textContent = `Welcome to ${stationName} Railway Station`;
+            const stationName = data.locationName || '';
+            document.getElementById('station-name').textContent = `Live train departures from ${stationName} Railway Station`;
 
             // Check if data has a property named 'trainServices'
             if (data.trainServices && data.trainServices.length > 0) {
@@ -310,7 +310,10 @@
                                 // Use ETA for the last calling point, otherwise use STD
                                 const timeToShow = loc === service.subsequentLocations[service.subsequentLocations.length - 1] ? eta : std;
 
-                                return `${cleanedName} (${timeToShow})`;
+                                // Truncate the location name if necessary
+                                const truncatedName = truncateText(cleanedName, 17);
+
+                                return `${truncatedName} (${timeToShow})`;
                             });
 
                         // Compare current calling points with the previous ones
@@ -412,7 +415,7 @@
 
     // Directly set the CRS code to "CAR" and start updating
     window.onload = function() {
-        const crsCode = "CAR";
+        const crsCode = "EUS";
         startUpdating(crsCode); // Start updating departures and calling points for the CRS code "CAR"
     };
     </script>

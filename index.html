@@ -284,7 +284,7 @@
                                 statusBox.style.backgroundColor = '#db5039'; // Red background
                                 statusBox.style.color = 'white'; // White text
                             } else if (Math.abs(etd - std) <= oneMinute) {
-                                statusBox.textContent = 'On Time';
+                                statusBox.textContent = 'Arrived';
                                 statusBox.style.backgroundColor = 'white';
                                 statusBox.style.color = 'black';
                             } else if (etd < std && std - etd <= 3 * oneMinute) { // Assuming "a few minutes" means up to 5 minutes

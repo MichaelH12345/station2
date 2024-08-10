@@ -410,14 +410,10 @@
         setInterval(() => updateDepartures(crsCode), 10000);
     }
 
-    // Prompt the user for a CRS code on page load
+    // Directly set the CRS code to "CAR" and start updating
     window.onload = function() {
-        const crsCode = prompt("Please enter the station CRS code (e.g., 'EUS'):");
-        if (crsCode) {
-            startUpdating(crsCode); // Start updating departures and calling points for the entered CRS code
-        } else {
-            console.log('No CRS code entered. The page will not display data.');
-        }
+        const crsCode = "CAR";
+        startUpdating(crsCode); // Start updating departures and calling points for the CRS code "CAR"
     };
     </script>
 

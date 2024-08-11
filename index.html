@@ -248,7 +248,7 @@
 
             // Update station name in the footer with "Railway Station" and a space after "Welcome to"
             const stationName = data.locationName || '';
-            document.getElementById('station-name').textContent = `Welcome to ${stationName} Railway Station`;
+            document.getElementById('station-name').textContent = `Live Departures from ${stationName} Railway Station`;
 
             // Check if data has a property named 'trainServices'
             if (data.trainServices && data.trainServices.length > 0) {

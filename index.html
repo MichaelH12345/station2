@@ -292,7 +292,7 @@
                                 statusBox.style.backgroundColor = 'white';
                                 statusBox.style.color = 'black';
                             } else {
-                                statusBox.textContent = 'On Time'; // Default status for other cases
+                                statusBox.textContent = 'Arrived'; // Default status for other cases
                                 statusBox.style.backgroundColor = 'white'; // Red background
                                 statusBox.style.color = 'black'; // White text
                             }
@@ -425,7 +425,7 @@
 
     // Directly set the CRS code to "CAR" and start updating
     window.onload = function() {
-        const crsCode = "PAD";
+        const crsCode = "WAT";
         startUpdating(crsCode); // Start updating departures and calling points for the CRS code "CAR"
     };
     </script>

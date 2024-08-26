@@ -152,6 +152,17 @@
             right: 0;
             bottom: 0; /* Align it to the bottom */
         }
+
+        /* Ensure the iframe fits within the section */
+        .section iframe {
+    position: absolute;
+    top: 0; /* Start from the top of the section */
+    left: 0; /* Align with the third vertical line */
+    width: calc(100% - 2px); /* Full width minus border */
+    height: calc(100% - -340px); /* Height until the grey footer box */
+    border: none; /* Remove the default border */
+    overflow: hidden; /* Ensure no scrollbars appear */
+        }
     </style>
 </head>
 <body>
@@ -185,19 +196,9 @@
             </div>
             <div class="calling-points"></div> <!-- New text box for calling points -->
         </div>
-        <!-- Section 3 -->
+        <!-- Section 3 (now containing an iframe) -->
         <div class="section" data-index="5">
-            <div class="platform"></div>
-            <div class="time-container">
-                <div class="time"></div>
-                <div class="status-box"></div>
-            </div>
-            <div class="destination"></div>
-            <div class="info">
-                <div class="toc"></div>
-                <div class="carriages"></div>
-            </div>
-            <div class="calling-points"></div> <!-- New text box for calling points -->
+            <iframe src="https://now.tfl.gov.uk"></iframe>
         </div>
     </div>
 
@@ -205,7 +206,7 @@
     <div class="footer" id="station-footer">
         <span id="station-name">N/A</span>
     </div>
-
+    
     <script>
     // Function to format time into BST hours and minutes
     function formatTime(timeString) {

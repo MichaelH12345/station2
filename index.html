@@ -154,15 +154,30 @@
         }
 
         /* Ensure the iframe fits within the section */
-        .section iframe {
+   .section iframe {
     position: absolute;
-    top: 0; /* Start from the top of the section */
-    left: 0; /* Align with the third vertical line */
+    top: 75px; /* Start from the top of the section */
+    left: 0; /* Align with the start of the section */
     width: calc(100% - 2px); /* Full width minus border */
-    height: calc(100% - -340px); /* Height until the grey footer box */
+    height: calc(75% - 150px); /* Height until the grey footer box */
     border: none; /* Remove the default border */
     overflow: hidden; /* Ensure no scrollbars appear */
-        }
+}
+
+
+/* Styling for the current time text box */
+.current-time {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 125px;
+    color: white;
+    text-align: center;
+    position: absolute;
+    bottom: 150px;
+    left: 0;
+    width: 100%;
+}
+
     </style>
 </head>
 <body>
@@ -198,8 +213,8 @@
         </div>
         <!-- Section 3 (now containing an iframe) -->
         <div class="section" data-index="5">
-            <iframe src="https://now.tfl.gov.uk"></iframe>
-        </div>
+            <iframe src="https://lewiscollard.com/british-rail-clock/?distractionFree=1&secondHandColour=plainRed"></iframe>
+<div class="current-time" id="current-time"></div>
     </div>
 
     <!-- Grey footer with station name -->
@@ -249,7 +264,7 @@
 
             // Update station name in the footer with "Railway Station" and a space after "Welcome to"
             const stationName = data.locationName || '';
-            document.getElementById('station-name').textContent = `Welcome to ${stationName}`;
+            document.getElementById('station-name').textContent = `Live Departures from ${stationName} Railway Station`;
 
             // Check if data has a property named 'trainServices'
             if (data.trainServices && data.trainServices.length > 0) {
@@ -429,6 +444,25 @@
         const crsCode = "CAR";
         startUpdating(crsCode); // Start updating departures and calling points for the CRS code "CAR"
     };
+
+    // Function to format time into HH:MM:SS
+function formatCurrentTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+// Function to update the current time every second
+function updateCurrentTime() {
+    document.getElementById('current-time').textContent = formatCurrentTime();
+}
+
+// Start updating the time
+setInterval(updateCurrentTime, 1000);
+updateCurrentTime(); // Initialize the time display
+
     </script>
 
 </body>

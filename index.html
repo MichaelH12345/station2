@@ -250,7 +250,7 @@ a {
         </div>
         <!-- Section 3 -->
         <div class="section" data-index="5">
-            <div class="notices">Travel Updates</div>
+            <div class="notices">Information</div>
             <div class="special-notices" id="special-notices"></div>
             <div class="current-time" id="current-time"></div>
         </div>
@@ -312,7 +312,7 @@ a {
                 
                 const specialNoticesElement = document.getElementById('special-notices');
                 if (specialNotices.length === 0) {
-                    specialNoticesElement.textContent = 'There are currently no disruption notices for this station. (for once)';
+                    specialNoticesElement.textContent = 'For the latest travel updates, including any changes to departure times or platform information, please listen to station announcements or check the electronic boards regularly.';
                 } else {
                     let currentNoticeIndex = 0;
                     function updateNotice() {
@@ -498,7 +498,7 @@ a {
 
         // Directly set the CRS code to "CAR" and start updating
         window.onload = function() {
-            const crsCode = "RDG";
+            const crsCode = "WFJ";
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code "CAR"
         };
 

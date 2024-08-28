@@ -305,23 +305,20 @@ a {
                 const stationName = data.locationName || '';
                 document.getElementById('station-name').textContent = `Live Departures from ${stationName} Railway Station`;
 
-                // Update special notices
-                const specialNotices = data.nrccMessages && data.nrccMessages.length > 0 
-                    ? data.nrccMessages.map(message => message.xhtmlMessage) 
-                    : [];
-                
-                const specialNoticesElement = document.getElementById('special-notices');
-                if (specialNotices.length === 0) {
-                    specialNoticesElement.textContent = 'For the latest travel updates, including any changes to departure times or platform information, please listen to station announcements or check the electronic boards regularly.';
-                } else {
-                    let currentNoticeIndex = 0;
-                    function updateNotice() {
-                        specialNoticesElement.innerHTML = specialNotices[currentNoticeIndex];
-                        currentNoticeIndex = (currentNoticeIndex + 1) % specialNotices.length;
-                    }
-                    updateNotice();
-                    setInterval(updateNotice, 10000); // Switch message every 10 seconds
-                }
+// Update special notices
+const specialNotices = data.nrccMessages && data.nrccMessages.length > 0 
+    ? data.nrccMessages.map(message => message.xhtmlMessage) 
+    : [];
+
+const specialNoticesElement = document.getElementById('special-notices');
+
+if (specialNotices.length === 0) {
+    specialNoticesElement.textContent = 'For the latest travel updates, including any changes to departure times or platform information, please listen to station announcements or check the electronic boards regularly.';
+} else {
+    // Display only the first notice
+    specialNoticesElement.innerHTML = specialNotices[0];
+}
+
 
                 // Check if data has a property named 'trainServices'
                 if (data.trainServices && data.trainServices.length > 0) {

@@ -166,7 +166,7 @@ a {
         .special-notices {
             font-family: BlackBox, sans-serif;
             position: absolute;
-            top: 160px; /* Position 50px from the top */
+            top: 135px; /* Position 50px from the top */
             left: 50%;
             transform: translateX(-50%); /* Center horizontally */
             width: calc(100% - 50px); /* Full width minus padding */
@@ -338,7 +338,7 @@ if (specialNotices.length === 0) {
     tempDiv.innerHTML = combinedText;
     const combinedLines = tempDiv.clientHeight / parseFloat(window.getComputedStyle(tempDiv).lineHeight);
 
-    if (specialNotices.length === 1 || combinedLines <= 9) {
+    if (specialNotices.length === 1 || combinedLines <= 7) {
         // Show all messages if they are 9 lines or fewer, or if there's only one message
         specialNoticesElement.innerHTML = combinedText;
     } else {

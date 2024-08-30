@@ -160,11 +160,13 @@ a {
             bottom: 0; /* Align it to the bottom */
         }
 
+
+
         /* Styling for the special notices text box */
         .special-notices {
             font-family: BlackBox, sans-serif;
             position: absolute;
-            top: 135px; /* Position 50px from the top */
+            top: 160px; /* Position 50px from the top */
             left: 50%;
             transform: translateX(-50%); /* Center horizontally */
             width: calc(100% - 50px); /* Full width minus padding */
@@ -172,6 +174,8 @@ a {
             font-size: 47.5px;
             text-align: center;
         }
+
+
 
             .notices {
             font-family: BlackBox, sans-serif;
@@ -262,6 +266,8 @@ a {
     </div>
     
     <script>
+
+
         // Function to format time into BST hours and minutes
         function formatTime(timeString) {
             if (!timeString) return 'N/A';
@@ -305,6 +311,9 @@ a {
                 const stationName = data.locationName || '';
                 document.getElementById('station-name').textContent = `Live Departures from ${stationName} Railway Station`;
 
+
+
+
 // Update special notices
 const specialNotices = data.nrccMessages && data.nrccMessages.length > 0 
     ? data.nrccMessages.map(message => message.xhtmlMessage) 
@@ -315,9 +324,33 @@ const specialNoticesElement = document.getElementById('special-notices');
 if (specialNotices.length === 0) {
     specialNoticesElement.textContent = 'For the latest travel updates, including any changes to departure times or platform information, please listen to station announcements or check the electronic boards regularly.';
 } else {
-    // Display only the first notice
-    specialNoticesElement.innerHTML = specialNotices[0];
+    // Create a temporary element to measure line count
+    const tempDiv = document.createElement('div');
+    tempDiv.style.visibility = 'hidden'; // Hide the element
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.width = 'calc(100% - 50px)'; // Use the same width as the special-notices element
+    tempDiv.style.fontSize = '47.5px'; // Use the same font size as the special-notices element
+    tempDiv.style.lineHeight = '1.2'; // Set line height to approximate text rendering
+    document.body.appendChild(tempDiv);
+
+    // Check line count for combined messages
+    let combinedText = specialNotices.join('<br>');
+    tempDiv.innerHTML = combinedText;
+    const combinedLines = tempDiv.clientHeight / parseFloat(window.getComputedStyle(tempDiv).lineHeight);
+
+    if (specialNotices.length === 1 || combinedLines <= 9) {
+        // Show all messages if they are 9 lines or fewer, or if there's only one message
+        specialNoticesElement.innerHTML = combinedText;
+    } else {
+        // Otherwise, show only the first message
+        specialNoticesElement.innerHTML = specialNotices[0];
+    }
+
+    // Remove the temporary element
+    document.body.removeChild(tempDiv);
 }
+
+
 
 
                 // Check if data has a property named 'trainServices'

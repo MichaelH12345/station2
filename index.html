@@ -316,7 +316,10 @@ a {
 
 // Update special notices
 const specialNotices = data.nrccMessages && data.nrccMessages.length > 0 
-    ? data.nrccMessages.map(message => message.xhtmlMessage) 
+    ? data.nrccMessages.map(message => ({
+        severity: message.severity || 0, // Default severity to 0 if not present
+        content: message.xhtmlMessage
+    }))
     : [];
 
 const specialNoticesElement = document.getElementById('special-notices');
@@ -324,31 +327,38 @@ const specialNoticesElement = document.getElementById('special-notices');
 if (specialNotices.length === 0) {
     specialNoticesElement.textContent = 'For the latest travel updates, including any changes to departure times or platform information, please listen to station announcements or check the electronic boards regularly.';
 } else {
+    // Sort special notices by severity (most severe first)
+    specialNotices.sort((a, b) => b.severity - a.severity);
+
+    // Extract sorted messages for display
+    const sortedNotices = specialNotices.map(notice => notice.content);
+
     // Create a temporary element to measure line count
     const tempDiv = document.createElement('div');
     tempDiv.style.visibility = 'hidden'; // Hide the element
     tempDiv.style.position = 'absolute';
     tempDiv.style.width = 'calc(100% - 50px)'; // Use the same width as the special-notices element
     tempDiv.style.fontSize = '47.5px'; // Use the same font size as the special-notices element
-    tempDiv.style.lineHeight = '1.2'; // Set line height to approximate text rendering
+    tempDiv.style.lineHeight = '1'; // Set line height to approximate text rendering
     document.body.appendChild(tempDiv);
 
     // Check line count for combined messages
-    let combinedText = specialNotices.join('<br>');
+    let combinedText = sortedNotices.join('<br>');
     tempDiv.innerHTML = combinedText;
     const combinedLines = tempDiv.clientHeight / parseFloat(window.getComputedStyle(tempDiv).lineHeight);
 
-    if (specialNotices.length === 1 || combinedLines <= 7) {
+    if (sortedNotices.length === 1 || combinedLines <= 6) {
         // Show all messages if they are 9 lines or fewer, or if there's only one message
         specialNoticesElement.innerHTML = combinedText;
     } else {
         // Otherwise, show only the first message
-        specialNoticesElement.innerHTML = specialNotices[0];
+        specialNoticesElement.innerHTML = sortedNotices[0];
     }
 
     // Remove the temporary element
     document.body.removeChild(tempDiv);
 }
+
 
 
 

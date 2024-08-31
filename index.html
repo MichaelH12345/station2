@@ -325,7 +325,7 @@ const specialNotices = data.nrccMessages && data.nrccMessages.length > 0
 const specialNoticesElement = document.getElementById('special-notices');
 
 if (specialNotices.length === 0) {
-    specialNoticesElement.textContent = 'For the latest travel updates, including any changes to departure times or platform information, please listen to station announcements or check the electronic boards regularly.';
+    specialNoticesElement.textContent = 'Some train services may be running slightly behind schedule, but no major disruptions have been reported. Please check the screens to the left for real-time updates on your train’s platform and departure time.';
 } else {
     // Sort special notices by severity (most severe first)
     specialNotices.sort((a, b) => b.severity - a.severity);
@@ -347,7 +347,7 @@ if (specialNotices.length === 0) {
     tempDiv.innerHTML = combinedText;
     const combinedLines = tempDiv.clientHeight / parseFloat(window.getComputedStyle(tempDiv).lineHeight);
 
-    if (sortedNotices.length === 1 || combinedLines <= 6) {
+    if (sortedNotices.length === 1 || combinedLines <= 3) {
         // Show all messages if they are 9 lines or fewer, or if there's only one message
         specialNoticesElement.innerHTML = combinedText;
     } else {
@@ -538,7 +538,7 @@ if (specialNotices.length === 0) {
 
         // Directly set the CRS code to "CAR" and start updating
         window.onload = function() {
-            const crsCode = "CAR";
+            const crsCode = "WFJ";
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code "CAR"
         };
 

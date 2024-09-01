@@ -449,9 +449,11 @@
                 priorityInfo += 'First class is available on the train.';
             }
             if (accessibleToiletsCount === 1) {
-                priorityInfo += (priorityInfo ? '\n' : '') + 'Accessible toilet onboard.';
+                priorityInfo += (priorityInfo ? '\n' : '') + '';
             } else if (accessibleToiletsCount > 1) {
-                priorityInfo += (priorityInfo ? '\n' : '') + 'Accessible toilets onboard.';
+                priorityInfo += (priorityInfo ? '\n' : '') + '';
+            } else if (accessibleToiletsCount > 0) {
+                priorityInfo += (priorityInfo ? '\n' : '') + 'No accessible toilets onboard.';
             }
             if (onlyStandardClass) {
                 priorityInfo += (priorityInfo ? '\n' : '') + '';

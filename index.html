@@ -481,7 +481,7 @@
         } else if (service.delayReason && service.delayReason.value) {
             const delayCode = service.delayReason.value;
             const delayReason = latenessCodes[delayCode] || 'Unknown delay reason';
-            reasonBox.textContent = delayReason.replace('This train has been delayed by', 'Service delayed by');
+            reasonBox.textContent = delayReason.replace('This train has been delayed by', 'Train delayed by');
             reasonBox.style.borderLeft = '10px solid red'; // Red border for delay
             reasonBox.style.display = 'flex'; // Show the reason box
         } else {

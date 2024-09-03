@@ -455,7 +455,7 @@
             } else {
                 priorityInfo += (priorityInfo ? '\n' : '') + 'No accessible toilets onboard.';
             }
-        } else if (service.operator === 'Northern') {
+        } else if (service.operator === 'Cheese') {
             priorityInfo += (priorityInfo ? '\n' : '') + 'Reserve seats up to 5 minutes prior to departure';
         }
 
@@ -486,10 +486,6 @@
             reasonBox.style.display = 'flex';
         } else if (service.operator === 'TransPennine Express' && !service.delayReason && !service.cancelReason) {
             reasonBox.textContent = 'Penalty fares apply on this train, buy before you board.';
-            reasonBox.style.borderLeft = '10px solid yellow';
-            reasonBox.style.display = 'flex';
-        } else if (service.operator === 'Northern' && !service.delayReason && !service.cancelReason) {
-            reasonBox.textContent = 'You must have a valid ticket to travel on this train.';
             reasonBox.style.borderLeft = '10px solid yellow';
             reasonBox.style.display = 'flex';
         } else if (service.operator === 'Grand Central' && !service.delayReason && !service.cancelReason) {

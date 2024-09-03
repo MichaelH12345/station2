@@ -489,7 +489,7 @@
             reasonBox.style.borderLeft = '10px solid yellow';
             reasonBox.style.display = 'flex';
         } else if (service.operator === 'Northern' && !service.delayReason && !service.cancelReason) {
-            reasonBox.textContent = '';
+            reasonBox.textContent = 'You must have a valid ticket to travel on this train.';
             reasonBox.style.borderLeft = '10px solid yellow';
             reasonBox.style.display = 'flex';
         } else if (service.operator === 'Grand Central' && !service.delayReason && !service.cancelReason) {
@@ -746,7 +746,7 @@ if (specialNotices.length === 0) {
     // Call the initialize function and start updating
     window.onload = function() {
         initialize().then(() => {
-            const crsCode = "CAR"; // You can change this to any valid CRS code
+            const crsCode = "EUS"; // You can change this to any valid CRS code
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code
         });
     };

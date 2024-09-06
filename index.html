@@ -567,7 +567,7 @@ const specialNotices = data.nrccMessages && data.nrccMessages.length > 0
 const specialNoticesElement = document.getElementById('special-notices');
 
 if (specialNotices.length === 0) {
-    specialNoticesElement.textContent = 'Some train services may be running slightly behind schedule, but no major disruptions have been reported. Please check the screens to the left for real-time updates on your train’s platform and departure time.';
+    specialNoticesElement.textContent = 'Please keep your luggage with you at all times whilst on the station. Unattended luggage is likely to be removed or destroyed.';
 } else {
     // Sort special notices by severity (most severe first)
     specialNotices.sort((a, b) => b.severity - a.severity);

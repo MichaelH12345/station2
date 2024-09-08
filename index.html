@@ -128,18 +128,86 @@
             color: black;
         }
 
-        /* Styling for the calling points text box */
-        .calling-points {
-            position: absolute;
-            top: 425px; /* 100px from the top of the section */
-            left: 25px; /* 25px from the left of the section */
-            width: calc(100% - 50px); /* Full width minus padding */
-            max-height: calc(100% - 150px); /* Ensure it doesn't overflow */
-            overflow: hidden; /* Remove scroll bar */
-            color: white;
-            font-size: 45px;
-            padding: 0; /* No padding */
-        }
+
+/* Container for calling points */
+/* Styling for the calling points text box */
+.calling-points {
+  position: absolute;
+  top: 455px; /* Adjust as needed */
+  left: 25px; /* Positioned 25px from the left of the container */
+  width: calc(100% - 50px); /* Full width minus padding for 25px left space */
+  max-height: calc(100% - 150px); /* Ensure it doesn't overflow */
+  overflow: visible; /* Ensure visibility of content */
+  color: white;
+  font-size: 45px;
+  padding: 0; /* No padding */
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.calling-points.fade-out {
+  opacity: 0;
+}
+
+/* Container for individual calling points */
+.calling-points-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding-left: 0px; /* No extra padding here */
+}
+
+/* Individual calling point styling */
+.calling-point {
+  position: relative; /* Allows absolute positioning of children within this element */
+  padding-left: 50px; /* No extra padding here */
+  margin-bottom: 20px; /* Adjust spacing between calling points */
+  line-height: 1; /* Set line-height (1.2 is an example, you can adjust it) */
+  font-size: 45px;
+  color: white;
+  /* The `left` property here adjusts the entire `.calling-point` but won't affect child elements directly */
+}
+
+/* White line positioning */
+.white-line {
+  position: absolute;
+  left: 17px; /* Positioned 5px from the left edge of the container */
+  top: -15px; /* Start slightly above the container */
+  bottom: -20px; /* End slightly below the container */
+  width: 7px; /* Width of the white vertical line */
+  background-color: white;
+}
+
+/* Black circle positioning */
+.black-circle {
+  position: absolute;
+  left: 6px; /* Positioned 5px from the left edge of the container */
+  top: 50%;
+  width: 15px; /* Diameter of the black circle */
+  height: 15px; /* Diameter of the black circle */
+  border-radius: 50%;
+  background-color: black;
+  border: 7px solid white; /* White outline */
+  transform: translateY(-50%);
+}
+
+/* White rectangle positioning */
+.white-rectangle {
+  position: absolute;
+  left: 9px; /* Positioned 5px from the left edge of the container */
+  top: 0;
+  bottom: 0;
+  width: 23px; /* Width for the last point's rectangle */
+  background-color: white;
+  border-radius: 5px;
+}
+
+/* Hide line and circle for the last point */
+.calling-point.last .white-line, 
+.calling-point.last .black-circle {
+  display: none;
+}
+
 
         /* Grey rectangle at the bottom of the page */
         .footer {
@@ -163,7 +231,7 @@
 .reason-box {
     position: absolute;
     width: calc(100% - 50px); /* Full width minus 25px padding on each side */
-    height: 150px;
+    height: 125px;
     background-color: grey;
     color: white;
     border-left: 5px solid red; /* Default red border for delay/cancellation reasons */
@@ -243,7 +311,7 @@
 
  <div class="container">
     <!-- Section 1 -->
-    <div class="section" data-index="3">
+    <div class="section" data-index="0">
         <div class="platform"></div>
         <div class="time-container">
             <div class="time"></div>
@@ -258,7 +326,7 @@
         <div class="reason-box"></div> <!-- New text box for reason -->
     </div>
     <!-- Section 2 -->
-    <div class="section" data-index="4">
+    <div class="section" data-index="1">
         <div class="platform"></div>
         <div class="time-container">
             <div class="time"></div>
@@ -496,15 +564,24 @@
         }
     }
 
-  function updateCallingPoints(section, callingPoints) {
+function updateCallingPoints(section, callingPoints) {
+    if (!section) {
+        console.error('Invalid section:', section);
+        return;
+    }
+
     const reasonBox = section.querySelector('.reason-box');
+    if (!reasonBox) {
+        console.error('Reason box not found in section:', section);
+        return;
+    }
+
     const isReasonBoxVisible = window.getComputedStyle(reasonBox).display === 'flex';
-    console.log('Reason box visibility:', isReasonBoxVisible);
+    console.log('Reason box visibility for section:', isReasonBoxVisible);
 
-    const callingPointsPerPage = isReasonBoxVisible ? 9 : 9;
-    console.log('Calling points per page:', callingPointsPerPage);
+    const callingPointsPerPage = isReasonBoxVisible ? 7 : 7;
+    console.log('Calling points per page for section:', callingPointsPerPage);
 
-    // Split calling points into pages based on the dynamic page size
     const pages = [];
     for (let i = 0; i < callingPoints.length; i += callingPointsPerPage) {
         pages.push(callingPoints.slice(i, i + callingPointsPerPage));
@@ -512,24 +589,35 @@
 
     console.log('Total pages:', pages.length);
 
-    // Update calling points
     function displayPage(pageIndex) {
         const page = pages[pageIndex] || [];
         console.log('Displaying page index:', pageIndex, 'Content:', page);
-        section.querySelector('.calling-points').innerHTML = page.map(loc => `<div>${loc}</div>`).join('');
+
+        const callingPointsContainer = section.querySelector('.calling-points');
+        if (!callingPointsContainer) {
+            console.error('Calling points container not found in section:', section);
+            return;
+        }
+
+        if (callingPoints.length >= 10) {
+            callingPointsContainer.classList.add('fade-out');
+
+            setTimeout(() => {
+                callingPointsContainer.innerHTML = page.map(loc => `<div>${loc}</div>`).join('');
+                callingPointsContainer.classList.remove('fade-out');
+            }, 500);
+        } else {
+            callingPointsContainer.innerHTML = page.map(loc => `<div>${loc}</div>`).join('');
+        }
     }
 
-    // Initial display of the first page
     displayPage(0);
 
-    // Clear previous interval
     if (section.hasAttribute('data-interval')) {
         clearInterval(Number(section.getAttribute('data-interval')));
     }
 
-    // Set a new interval to update calling points every 10 seconds
     section.setAttribute('data-interval', setInterval(() => {
-        // Move the first page to the end and display the next page
         pages.push(pages.shift());
         displayPage(0);
     }, 10000));
@@ -606,19 +694,29 @@
                         section.querySelector('.destination').textContent = destination;
 
                         // Calling Points
-                        const currentSubsequentLocations = service.subsequentLocations
-                            .filter(location => !location.isPass) // Only locations where isPass is false
-                            .map(loc => {
-                                // Remove text within brackets
-                                const cleanedName = loc.locationName.replace(/\s*\(.*?\)\s*/g, '');
-                                const std = formatTime(loc.std);
-                                const eta = formatTime(loc.eta);
+const currentSubsequentLocations = service.subsequentLocations
+    .filter(location => !location.isPass) // Only locations where isPass is false
+    .map((loc, index, array) => {
+        const cleanedName = loc.locationName.replace(/\s*\(.*?\)\s*/g, '');
+        const std = formatTime(loc.std);
+        const eta = formatTime(loc.eta);
 
-                                // Use ETA for the last calling point, otherwise use STD
-                                const timeToShow = loc === service.subsequentLocations[service.subsequentLocations.length - 1] ? eta : std;
+        // Use ETA for the last calling point, otherwise use STD
+        const timeToShow = loc === array[array.length - 1] ? eta : std;
 
-                                return `${truncateCallingPoint(cleanedName)} (${timeToShow})`;
-                            });
+        // Check if it's the last calling point
+        const isLast = index === array.length - 1;
+
+        // Return HTML structure with proper classes
+        return `
+            <div class="calling-point ${isLast ? 'last' : ''}">
+                ${truncateCallingPoint(cleanedName)} (${timeToShow})
+                ${isLast 
+                    ? '<span class="white-rectangle"></span>' 
+                    : '<span class="white-line"></span><span class="black-circle"></span>'}
+            </div>`;
+    });
+
 
                         // Compare current destinations with the previous ones
                         if (previousDestinations[index] !== destination) {
@@ -692,7 +790,7 @@
     // Call the initialize function and start updating
     window.onload = function() {
         initialize().then(() => {
-            const crsCode = "CAR"; // You can change this to any valid CRS code
+            const crsCode = "YRK"; // You can change this to any valid CRS code
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code
         });
     };

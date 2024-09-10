@@ -160,41 +160,57 @@
 /* Individual calling point styling */
 .calling-point {
   position: relative; /* Allows absolute positioning of children within this element */
-  padding-left: 50px; /* No extra padding here */
+  padding-left: 45px; /* No extra padding here */
   margin-bottom: 20px; /* Adjust spacing between calling points */
   line-height: 1; /* Set line-height (1.2 is an example, you can adjust it) */
   font-size: 45px;
   color: white;
   /* The `left` property here adjusts the entire `.calling-point` but won't affect child elements directly */
 }
+.calling-name {
+    flex-grow: 1; /* Keep the name on the left */
+    font-size: 45px; /* Adjust font size */
+}
+
+.calling-time {
+    flex-shrink: 0;
+    margin-right: 0px; /* Optional spacing between name and time */
+    font-size: 45px;
+    color: white;
+    position: absolute;
+    right: 0px; /* Align time 25px from the right edge */
+}
 
 /* White line positioning */
 .white-line {
   position: absolute;
-  left: 17px; /* Positioned 5px from the left edge of the container */
-  top: -15px; /* Start slightly above the container */
+  left: 13px; /* Positioned 5px from the left edge of the container */
+  top: -20px; /* Start slightly above the container */
   bottom: -20px; /* End slightly below the container */
   width: 7px; /* Width of the white vertical line */
   background-color: white;
 }
 
+
+
 /* Black circle positioning */
 .black-circle {
   position: absolute;
-  left: 6px; /* Positioned 5px from the left edge of the container */
+  left: 5px; /* Positioned 5px from the left edge of the container */
   top: 50%;
-  width: 15px; /* Diameter of the black circle */
-  height: 15px; /* Diameter of the black circle */
+  width: 12px; /* Diameter of the black circle */
+  height: 12px; /* Diameter of the black circle */
   border-radius: 50%;
   background-color: black;
   border: 7px solid white; /* White outline */
   transform: translateY(-50%);
+  z-index: 1; /* Ensure the circle is on top */
 }
 
 /* White rectangle positioning */
 .white-rectangle {
   position: absolute;
-  left: 9px; /* Positioned 5px from the left edge of the container */
+  left: 5px; /* Positioned 5px from the left edge of the container */
   top: 0;
   bottom: 0;
   width: 23px; /* Width for the last point's rectangle */
@@ -243,7 +259,7 @@
     display: flex;
     align-items: center; /* Center text vertically */
     justify-content: center; /* Center text horizontally */
-    font-size: 40px; /* Adjust font size as needed */
+    font-size: 35px; /* Adjust font size as needed */
 }
 
 /* Class for yellow border when displaying general information */
@@ -311,7 +327,7 @@
 
  <div class="container">
     <!-- Section 1 -->
-    <div class="section" data-index="0">
+    <div class="section" data-index="3">
         <div class="platform"></div>
         <div class="time-container">
             <div class="time"></div>
@@ -326,7 +342,7 @@
         <div class="reason-box"></div> <!-- New text box for reason -->
     </div>
     <!-- Section 2 -->
-    <div class="section" data-index="1">
+    <div class="section" data-index="4">
         <div class="platform"></div>
         <div class="time-container">
             <div class="time"></div>
@@ -363,21 +379,33 @@
         return `${localDate.getHours().toString().padStart(2, '0')}:${localDate.getMinutes().toString().padStart(2, '0')}`;
     }
 
-    // Function to truncate text if it's longer than a given length
-    function truncateText(text, length) {
-        if (text.length > length) {
-            return text.substring(0, length) + '...';
-        }
-        return text;
+// Function to truncate text if it's longer than a given length
+function truncateText(text, length) {
+    if (text.length > length) {
+        return text.substring(0, length) + '...';
     }
+    return text;
+}
 
-    // Function to truncate calling point text to a maximum length of 14 characters
-    function truncateCallingPoint(text) {
-        if (text.length > 17) { // Check if the length exceeds 17 characters
-            return text.substring(0, 14) + '...';
-        }
-        return text;
+function truncateCallingPoint(text) {
+    // Replace specific words with their abbreviated forms
+    let updatedText = text
+        .replace(/Lichfield Trent Valley/g, 'Lichfield T Valley')
+        .replace(/Rugeley Trent Valley/g, 'Rugeley T Valley')
+        .replace(/Junction/g, 'Jn')
+        .replace(/Central/g, 'Ctl')
+        .replace(/Penrith North Lakes/g, 'Penrith N Lakes')
+        .replace(/Street/g, 'St')
+        .replace(/International/g, 'Intl');
+    
+    
+    // Truncate to a maximum length of 17 characters if needed
+    if (updatedText.length > 18) {
+        return updatedText.substring(0, 16) + '...';
     }
+    return updatedText;
+}
+
 
     // Variable to store previous calling points and subsequent locations for comparison
     let previousCallingPoints = [];
@@ -500,7 +528,7 @@
             } else if (accessibleToiletsList.length > 1) {
                 formationInfo += (formationInfo ? '\n' : '') + `Accessible toilet in coaches ${accessibleToiletsList.slice(0, -1).join(', ')} and ${accessibleToiletsList.slice(-1)}.`;
             } else {
-                formationInfo += (formationInfo ? '\n' : '') + 'No accessible toilet onboard.';
+                formationInfo += (formationInfo ? '\n' : '') + 'This train does not have any accessible toilets onboard.';
             }
         }
 
@@ -508,14 +536,14 @@
          let priorityInfo = '';
         if (service.operator === 'West Midlands Trains') {
             if (hasFirstClass) {
-                priorityInfo += 'First class is available on the train.';
+                priorityInfo += 'First class is available onboard.';
             }
             if (accessibleToiletsCount > 1) {
-                priorityInfo += (priorityInfo ? '\n' : '') + 'Accessible toilets are available.';
+                priorityInfo += (priorityInfo ? '\n' : '') + 'This train has accessible toilets onboard.';
             } else if (accessibleToiletsCount > 0) {
-                priorityInfo += (priorityInfo ? '\n' : '') + 'Accessible toilet is available.';
+                priorityInfo += (priorityInfo ? '\n' : '') + 'This train has an accessible toilet onboard.';
             } else {
-                priorityInfo += (priorityInfo ? '\n' : '') + 'No accessible toilets onboard.';
+                priorityInfo += (priorityInfo ? '\n' : '') + 'This train does not have any accessible toilets onboard.';
             }
         } else if (service.operator === 'Cheese') {
             priorityInfo += (priorityInfo ? '\n' : '') + 'Reserve seats up to 5 minutes prior to departure';
@@ -533,14 +561,14 @@
         if (service.isCancelled && service.cancelReason?.value) {
             const cancelCode = service.cancelReason.value;
             const cancelReason = cancellationCodes[cancelCode] || 'Unknown cancellation reason';
-            reasonBox.textContent = cancelReason.replace('This train has been cancelled because of', 'Service cancelled because of');
-            reasonBox.style.borderLeft = '10px solid red';
+            reasonBox.textContent = cancelReason.replace('This train has been cancelled because of', 'Service cancelled due to');
+            reasonBox.style.borderLeft = '10px solid #d4351c';
             reasonBox.style.display = 'flex';
         } else if (service.delayReason?.value) {
             const delayCode = service.delayReason.value;
             const delayReason = latenessCodes[delayCode] || 'Unknown delay reason';
-            reasonBox.textContent = delayReason.replace('This train has been delayed by', 'Train delayed by');
-            reasonBox.style.borderLeft = '10px solid red';
+            reasonBox.textContent = delayReason.replace('This train has been delayed by', 'Service delayed due to');
+            reasonBox.style.borderLeft = '10px solid #db5039';
             reasonBox.style.display = 'flex';
         } else if (service.operator === 'London North Eastern Railway' && !service.delayReason && !service.cancelReason) {
             reasonBox.textContent = 'Reserve seats up to 5 minutes prior to departure.';
@@ -570,28 +598,51 @@ function updateCallingPoints(section, callingPoints) {
         return;
     }
 
+    // Try to find the reason box and ensure it has been rendered
     const reasonBox = section.querySelector('.reason-box');
-    if (!reasonBox) {
-        console.error('Reason box not found in section:', section);
-        return;
+    let callingPointsPerBox = 7; // Default to 7 calling points per page
+
+    if (reasonBox) {
+        // Make sure the reason box styles are fully loaded/rendered before checking visibility
+        setTimeout(() => {
+            const reasonBoxStyles = window.getComputedStyle(reasonBox);
+
+            // Check if the reason box is displayed (not "none"), adjust the calling points per box
+            if (reasonBoxStyles.display !== 'none') {
+                console.log('Reason box is visible for this section.');
+                callingPointsPerBox = 5; // Show fewer calling points if the reason box is visible
+            } else {
+                console.log('Reason box is not visible for this section.');
+                callingPointsPerBox = 7; // Show more calling points if the reason box is hidden
+            }
+
+            // Now paginate the calling points after determining how many to show
+            paginateCallingPoints(section, callingPoints, callingPointsPerBox);
+
+        }, 100); // Delay to ensure the styles are fully applied and visible on the screen
+    } else {
+        console.warn('Reason box not found in this section, defaulting to 7 calling points.');
+        callingPointsPerBox = 7; // Default to 7 if no reason box is found
+
+        // Paginate calling points immediately since no reason box was found
+        paginateCallingPoints(section, callingPoints, callingPointsPerBox);
     }
+}
 
-    const isReasonBoxVisible = window.getComputedStyle(reasonBox).display === 'flex';
-    console.log('Reason box visibility for section:', isReasonBoxVisible);
+function paginateCallingPoints(section, callingPoints, callingPointsPerBox) {
+    console.log('Calling points per page for this section:', callingPointsPerBox);
 
-    const callingPointsPerPage = isReasonBoxVisible ? 7 : 7;
-    console.log('Calling points per page for section:', callingPointsPerPage);
-
+    // Paginate calling points
     const pages = [];
-    for (let i = 0; i < callingPoints.length; i += callingPointsPerPage) {
-        pages.push(callingPoints.slice(i, i + callingPointsPerPage));
+    for (let i = 0; i < callingPoints.length; i += callingPointsPerBox) {
+        pages.push(callingPoints.slice(i, i + callingPointsPerBox));
     }
 
-    console.log('Total pages:', pages.length);
+    console.log('Total pages for this section:', pages.length);
 
     function displayPage(pageIndex) {
         const page = pages[pageIndex] || [];
-        console.log('Displaying page index:', pageIndex, 'Content:', page);
+        console.log('Displaying page index for this section:', pageIndex, 'Content:', page);
 
         const callingPointsContainer = section.querySelector('.calling-points');
         if (!callingPointsContainer) {
@@ -599,7 +650,8 @@ function updateCallingPoints(section, callingPoints) {
             return;
         }
 
-        if (callingPoints.length >= 10) {
+        // Apply fade-out effect for multiple pages
+        if (pages.length > 1) {
             callingPointsContainer.classList.add('fade-out');
 
             setTimeout(() => {
@@ -607,23 +659,41 @@ function updateCallingPoints(section, callingPoints) {
                 callingPointsContainer.classList.remove('fade-out');
             }, 500);
         } else {
+            // No fade if everything fits on one page
             callingPointsContainer.innerHTML = page.map(loc => `<div>${loc}</div>`).join('');
         }
     }
 
     displayPage(0);
 
+    // Ensure we clear any previous interval for this section
     if (section.hasAttribute('data-interval')) {
         clearInterval(Number(section.getAttribute('data-interval')));
     }
 
-    section.setAttribute('data-interval', setInterval(() => {
-        pages.push(pages.shift());
-        displayPage(0);
-    }, 10000));
+    // Only set an interval if there are multiple pages
+    if (pages.length > 1) {
+        const intervalId = setInterval(() => {
+            pages.push(pages.shift());
+            displayPage(0);
+        }, 10000);
+
+        section.setAttribute('data-interval', intervalId); // Store the interval ID in the section
+    }
 }
 
+// Assuming you have a function to handle new API responses
+function handleApiResponse(apiResponse) {
+    apiResponse.services.forEach(service => {
+        const section = document.querySelector(`#service-${service.id}`);
 
+        // Assuming calling points are part of the service object
+        const callingPoints = service.subsequentLocations.map(loc => loc.locationName);
+
+        // Update calling points for this service
+        updateCallingPoints(section, callingPoints);
+    });
+}
     // Update departures function to handle trainServices array
     async function updateDepartures(crsCode) {
         try {
@@ -693,29 +763,65 @@ function updateCallingPoints(section, callingPoints) {
                         const destination = service.destination && service.destination.length > 0 ? service.destination[0].locationName || 'N/A' : 'N/A';
                         section.querySelector('.destination').textContent = destination;
 
-                        // Calling Points
 const currentSubsequentLocations = service.subsequentLocations
-    .filter(location => !location.isPass) // Only locations where isPass is false
+    .filter(location => !location.isPass)
     .map((loc, index, array) => {
-        const cleanedName = loc.locationName.replace(/\s*\(.*?\)\s*/g, '');
+        const cleanedName = truncateCallingPoint(loc.locationName);
         const std = formatTime(loc.std);
         const eta = formatTime(loc.eta);
-
-        // Use ETA for the last calling point, otherwise use STD
         const timeToShow = loc === array[array.length - 1] ? eta : std;
-
-        // Check if it's the last calling point
         const isLast = index === array.length - 1;
+        const isFirst = index === 0;
+        const isSecond = index === 1;
+        const isSecondToLast = index === array.length - 2;
+        const isCancelled = service.isCancelled;
 
-        // Return HTML structure with proper classes
+        // Determine if the entire service is delayed
+        // Check if any calling point in the service has ETD > STD
+        const isServiceDelayed = service.subsequentLocations.some(loc => 
+            loc.etd && loc.std && formatTime(loc.etd) > formatTime(loc.std)
+        );
+
+        // Styles based on service status
+        const circleColor = isCancelled ? 'black' : (isServiceDelayed ? '#db5039' : 'black'); // Red circle if service is delayed
+        const circleOutline = isCancelled ? '#d4351c' : 'white'; // Red outline for cancelled, white for others
+        const callingPointColor = isCancelled ? 'grey' : 'white'; // Grey text for cancelled
+        const lineColor = isCancelled ? 'grey' : 'white'; // Grey line for cancelled
+        const rectangleColor = isCancelled ? 'grey' : 'white'; // Grey rectangle for cancelled
+
+        // Calculate the line style
+        const lineStyle = isSecond
+            ? `background-color: ${lineColor}; height: calc(100px + 25px); top: -35px;`
+            : isSecondToLast
+            ? `background-color: ${lineColor}; height: calc(100px);`
+            : `background-color: ${lineColor};`;
+
+        // Logic for showing the '2line' when there are only two calling points
+        const show2Line = array.length === 2 && !isLast ? `
+            <span class="2line" style="
+                background-color: ${lineColor}; 
+                position: absolute; 
+  left: 13px; /* Positioned 5px from the left edge of the container */
+  top: 15px; /* Start slightly above the container */ 
+                height: calc(50px); /* Adjust the height as needed */
+                width: 7px;">
+            </span>` : '';
         return `
-            <div class="calling-point ${isLast ? 'last' : ''}">
-                ${truncateCallingPoint(cleanedName)} (${timeToShow})
-                ${isLast 
-                    ? '<span class="white-rectangle"></span>' 
-                    : '<span class="white-line"></span><span class="black-circle"></span>'}
+            <div class="calling-point ${isLast ? 'last' : ''}" style="color: ${callingPointColor}">
+                <span class="calling-name">${cleanedName}</span>
+                <span class="calling-time" style="color: ${callingPointColor}">${timeToShow}</span>
+                ${isLast
+                    ? `<span class="white-rectangle" style="background-color: ${rectangleColor};"></span>` 
+                    : `${!isFirst ? `<span class="white-line" style="${lineStyle};"></span>` : ''}
+                        <span class="black-circle" style="background-color: ${circleColor}; border-color: ${circleOutline};"></span>
+                        ${show2Line}` }
             </div>`;
     });
+
+
+
+
+
 
 
                         // Compare current destinations with the previous ones
@@ -725,6 +831,14 @@ const currentSubsequentLocations = service.subsequentLocations
                             // Update calling points
                             updateCallingPoints(section, currentSubsequentLocations);
                         }
+
+                        const services = document.querySelectorAll('trainServices'); // Assuming each service has this class
+
+services.forEach(section => {
+    const callingPoints = getCallingPointsForService(section); // Get calling points for the specific service
+    updateCallingPoints(section, callingPoints); // Update calling points for each service
+});
+
 
                         // Operator
                         let operator = service.operator || 'N/A';
@@ -754,12 +868,13 @@ const currentSubsequentLocations = service.subsequentLocations
                         let displayText = '';
                         let textColor = 'yellow'; // Default color
 
-                        if (formation === '0' || formation === null || formation === undefined) {
-                            displayText = 'No coach length data';
-                            textColor = 'black'; // Different color for "No data"
-                        } else {
-                            displayText = `${formation} carriages`;
-                        }
+if (length === '0' || formation === null || formation === undefined) {
+    // Set color to black if formation is null and length is '0'
+    textColor = formation === '0' ? 'black' : textColor;
+    displayText = 'No coach length data';
+} else {
+    displayText = `${formation} carriages`;
+}
 
                         // Set carriages text and color
                         section.querySelector('.carriages').style.color = textColor;

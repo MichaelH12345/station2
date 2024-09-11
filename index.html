@@ -706,7 +706,7 @@ function handleApiResponse(apiResponse) {
 
             // Update station name in the footer
             const stationName = data.locationName || '';
-            document.getElementById('station-name').textContent = `Welcome to ${stationName} Railway Station`;
+            document.getElementById('station-name').textContent = `Welcome to ${stationName} Station`;
 
 
             // Check if data has a property named 'trainServices'
@@ -905,7 +905,7 @@ if (length === '0' || formation === null || formation === undefined) {
     // Call the initialize function and start updating
     window.onload = function() {
         initialize().then(() => {
-            const crsCode = "MKC"; // You can change this to any valid CRS code
+            const crsCode = "YRK"; // You can change this to any valid CRS code
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code
         });
     };

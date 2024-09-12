@@ -767,7 +767,7 @@ const currentSubsequentLocations = service.subsequentLocations
     .filter(location => !location.isPass)
     .map((loc, index, array) => {
         const cleanedName = truncateCallingPoint(loc.locationName);
-        const std = formatTime(loc.std);
+        const std = formatTime(loc.sta);
         const eta = formatTime(loc.eta);
         const timeToShow = loc === array[array.length - 1] ? eta : std;
         const isLast = index === array.length - 1;

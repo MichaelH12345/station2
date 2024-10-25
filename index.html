@@ -83,10 +83,10 @@
             font-size: 40px;
             font-weight: bold;
             padding: 0 20px;
-            border-radius: 10px;
+            border-radius: 5px;
             line-height: 70px; 
             height: 70px;
-            width: 250px; /* Fixed width */
+            width: 225px; /* Fixed width */
             text-align: center;
             margin-left: 20px;
             position: absolute;
@@ -359,7 +359,7 @@
     </div>
         <!-- Section 3 -->
         <div class="section" data-index="5">
-            <div class="notices">Station Notices</div>
+            <div class="notices">Information</div>
                         <iframe src="https://michaelh12345.github.io/notices/"></iframe>
             <div class="current-time" id="current-time"></div>
         </div>
@@ -910,7 +910,7 @@ if (length === '0' || formation === null || formation === undefined) {
     // Call the initialize function and start updating
     window.onload = function() {
         initialize().then(() => {
-            const crsCode = "YRK"; // You can change this to any valid CRS code
+            const crsCode = "WFJ"; // You can change this to any valid CRS code
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code
         });
     };

@@ -383,13 +383,13 @@
     </div>
 
 <script>
-    // Function to format time into BST hours and minutes
-    function formatTime(timeString) {
-        if (!timeString) return 'N/A';
-        const date = new Date(timeString);
-        const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000 + 3600000); // Convert to local time and adjust for BST
-        return `${localDate.getHours().toString().padStart(2, '0')}:${localDate.getMinutes().toString().padStart(2, '0')}`;
-    }
+// Function to format time into GMT hours and minutes
+function formatTime(timeString) {
+    if (!timeString) return 'N/A';
+    const date = new Date(timeString);
+    const gmtDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000); // Convert to GMT
+    return `${gmtDate.getHours().toString().padStart(2, '0')}:${gmtDate.getMinutes().toString().padStart(2, '0')}`;
+}
 
 // Function to truncate text if it's longer than a given length
 function truncateText(text, length) {

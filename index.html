@@ -224,7 +224,14 @@
   display: none;
 }
 
-
+          .viaBox {
+            position: absolute;
+            top: 290px; /* Position 200px from the top of the section */
+            left: 25px; /* Align with the padding of the section */
+            right: 25px; /* Maintain padding on the right side */
+            font-size: 50px;
+        }
+        
         /* Grey rectangle at the bottom of the page */
         .footer {
             background-color: grey;
@@ -247,10 +254,12 @@
 .reason-box {
     position: absolute;
     width: calc(100% - 50px); /* Full width minus 25px padding on each side */
+    border-radius: 7px;
     height: 125px;
     background-color: grey;
     color: white;
-    border-left: 5px solid red; /* Default red border for delay/cancellation reasons */
+    border-left: 15px solid red; 
+    border-top: 7px solid red; /* Default red border for delay/cancellation reasons */
     padding: 10px;
     padding-left: 15px;
     box-sizing: border-box;
@@ -335,6 +344,7 @@
             <div class="status-box"></div>
         </div>
         <div class="destination"></div>
+        <div class="viaBox"></div>
         <div class="info">
             <div class="toc"></div>
             <div class="carriages"></div>
@@ -350,6 +360,7 @@
             <div class="status-box"></div>
         </div>
         <div class="destination"></div>
+        <div class="viaBox"></div>
         <div class="info">
             <div class="toc"></div>
             <div class="carriages"></div>
@@ -553,7 +564,7 @@ function truncateCallingPoint(text) {
         return priorityInfo.trim() || formationInfo.trim();
     }
 
-    function handleReasons(service, section) {
+   function handleReasons(service, section) {
         const reasonBox = section.querySelector('.reason-box');
         reasonBox.classList.remove('yellow-border');
         reasonBox.style.borderLeft = 'none';
@@ -563,35 +574,42 @@ function truncateCallingPoint(text) {
             const cancelCode = service.cancelReason.value;
             const cancelReason = cancellationCodes[cancelCode] || 'Unknown cancellation reason';
             reasonBox.textContent = cancelReason.replace('This train has been cancelled because of', 'Service cancelled due to');
-            reasonBox.style.borderLeft = '10px solid #d4351c';
+            reasonBox.style.borderLeft = '15px solid #d4351c';
+            reasonBox.style.borderTop = '7px solid #d4351c';
             reasonBox.style.display = 'flex';
         } else if (service.isCancelled && service.operator === 'Avanti West Coast' && !service.cancelReason) {
     reasonBox.textContent = 'Your ticket is valid on the two Avanti West Coast services before or after your booked train.';
-    reasonBox.style.borderLeft = '10px solid #d4351c';
+    reasonBox.style.borderLeft = '15px solid #d4351c';
+    reasonBox.style.borderTop = '7px solid #d4351c';
     reasonBox.style.display = 'flex';
         } else if (service.delayReason?.value) {
             const delayCode = service.delayReason.value;
             const delayReason = latenessCodes[delayCode] || 'Unknown delay reason';
             reasonBox.textContent = delayReason.replace('This train has been delayed by', 'Service delayed due to');
-            reasonBox.style.borderLeft = '10px solid #db5039';
+            reasonBox.style.borderLeft = '15px solid #db5039';
+            reasonBox.style.borderTop = '7px solid #d4351c';
             reasonBox.style.display = 'flex';
         } else if (service.operator === 'London North Eastern Railway' && !service.delayReason && !service.cancelReason) {
             reasonBox.textContent = 'Reserve seats up to 5 minutes prior to departure.';
-            reasonBox.style.borderLeft = '10px solid yellow';
+            reasonBox.style.borderLeft = '15px solid yellow';
+            reasonBox.style.borderTop = '7px solid yellow';
             reasonBox.style.display = 'flex';
-        } else if (service.operator === 'TransPennine Express' && !service.delayReason && !service.cancelReason) {
+        } else if (service.operator === 'T' && !service.delayReason && !service.cancelReason) {
             reasonBox.textContent = 'Penalty fares apply on this train, buy before you board.';
-            reasonBox.style.borderLeft = '10px solid yellow';
+            reasonBox.style.borderLeft = '15px solid yellow';
+            reasonBox.style.borderTop = '7px solid yellow';
             reasonBox.style.display = 'flex';
-        } else if (service.operator === 'Grand Central' && !service.delayReason && !service.cancelReason) {
+        } else if (service.operator === 'EE' && !service.delayReason && !service.cancelReason) {
             reasonBox.textContent = 'You MUST have a seat reservation to travel on this service.';
-            reasonBox.style.borderLeft = '10px solid yellow';
+            reasonBox.style.borderLeft = '15px solid yellow';
+            reasonBox.style.borderTop = '7px solid yellow';
             reasonBox.style.display = 'flex';
         } else {
             const formationInfo = handleFormationAndToilets(service);
             if (formationInfo) {
                 reasonBox.textContent = formationInfo;
-                reasonBox.style.borderLeft = '10px solid yellow';
+                reasonBox.style.borderLeft = '15px solid yellow';
+                reasonBox.style.borderTop = '7px solid yellow';
                 reasonBox.style.display = 'flex';
             }
         }
@@ -700,7 +718,7 @@ function handleApiResponse(apiResponse) {
     });
 }
     // Update departures function to handle trainServices array
-    async function updateDepartures(crsCode) {
+  async function updateDepartures(crsCode) {
         try {
             console.log('Fetching data from API...');
             const response = await fetch(`https://national-rail-api.davwheat.dev/staffdepartures/${crsCode}?expand=true`);
@@ -715,9 +733,18 @@ function handleApiResponse(apiResponse) {
 
 
             // Check if data has a property named 'trainServices'
-            if (data.trainServices && data.trainServices.length > 0) {
-                data.trainServices.forEach((service, index) => {
-                    const section = document.querySelector(`.section[data-index="${index}"]`);
+        if (data.trainServices && data.trainServices.length > 0) {
+            data.trainServices.forEach((service, index) => {
+                console.log(`Service ${index + 1}:`, service);
+
+                
+
+                // Attempt to access 'via' and log it for debugging
+                const lastLocationName = service.destination[service.destination.length - 1].locationName; // Get the last destination
+                const viaValue = service.via || service.destination[0]?.via || null; // Access via from destination
+
+                const section = document.querySelector(`.section[data-index="${index}"]`);
+
 
                     if (section) {
                         // Platform
@@ -746,17 +773,17 @@ function handleApiResponse(apiResponse) {
                                 statusBox.style.backgroundColor = '#db5039'; // Red background
                                 statusBox.style.color = 'white'; // White text
                             } else if (Math.abs(etd - std) <= oneMinute) {
-                                statusBox.textContent = 'On Time';
+                                statusBox.textContent = 'On time';
                                 statusBox.style.backgroundColor = 'white';
                                 statusBox.style.color = 'black';
                             } else if (etd < std && std - etd <= 1 * oneMinute) { // Assuming "a few minutes" means up to 5 minutes
-                                statusBox.textContent = 'On Time';
+                                statusBox.textContent = 'On time';
                                 statusBox.style.backgroundColor = 'white';
                                 statusBox.style.color = 'black';
                             } else {
-                                statusBox.textContent = 'Delayed'; // Default status for other cases
-                                statusBox.style.backgroundColor = '#db5039'; // Red background
-                                statusBox.style.color = 'white'; // White text
+                                statusBox.textContent = 'Arrived'; // Default status for other cases
+                                statusBox.style.backgroundColor = 'white'; // Red background
+                                statusBox.style.color = 'black'; // White text
                             }
                         } else {
                             statusBox.textContent = 'N/A';
@@ -829,6 +856,7 @@ const currentSubsequentLocations = service.subsequentLocations
 
 
 
+
                         // Compare current destinations with the previous ones
                         if (previousDestinations[index] !== destination) {
                             previousDestinations[index] = destination;
@@ -844,16 +872,25 @@ services.forEach(section => {
     updateCallingPoints(section, callingPoints); // Update calling points for each service
 });
 
-
+         // Create and configure the via text box
+             const viaBox = section.querySelector('.viaBox'); // Select the existing via box
+            
+                   if (viaValue && lastLocationName.length > 15) {
+                        section.querySelector('.toc').textContent = viaValue; // Replace operator text with via value
+                        section.querySelector('.toc').style.color = 'white'; // Set to white
+                        section.querySelector('.viaBox').style.display = 'none'; // Hide via box
+                    } else if (lastLocationName.length <= 15) {
+                        section.querySelector('.viaBox').textContent = viaValue; // Show via in the via box
+                        section.querySelector('.viaBox').style.display = 'flex'; // Show via box
+                        section.querySelector('.toc').textContent = service.operator; // Reset operator text
+                        section.querySelector('.toc').style.color = ''; // Reset color
+                    } else if (viaValue === null) {
+                        section.querySelector('.viaBox').style.display = 'none'; // Hide via box
+                        section.querySelector('.toc').textContent = service.operator; // Show normal operator text
+                        section.querySelector('.toc').style.color = ''; // Reset color if needed
+                    }
                         // Operator
-                        let operator = service.operator || 'N/A';
-                        if (operator === 'West Midlands Trains') {
-                            operator = 'London Northwestern Railway';
-                        }
-                        if (operator !== 'TransPennine Express') {
-                            operator = truncateText(operator, 17);
-                        }
-                        section.querySelector('.toc').textContent = operator;
+;
 
                         // Carriages (formation)
                         let formation = null;
@@ -869,21 +906,32 @@ services.forEach(section => {
                             formation = service.length;
                         }
 
-                        // Determine the display message based on formation
-                        let displayText = '';
-                        let textColor = 'yellow'; // Default color
+     // Carriages (formation)
+let displayText = '';
+let textColor = 'yellow'; // Default color
 
-if (length === '0' || formation === null || formation === undefined) {
-    // Set color to black if formation is null and length is '0'
-    textColor = formation === '0' ? 'black' : textColor;
-    displayText = 'No coach length data';
-} else {
+// Check if formation is available and has coaches
+if (service.formation && service.formation.coaches) {
+    // Count the number of coaches in the formation
+    const formation = service.formation.coaches.length;
     displayText = `${formation} carriages`;
+} else {
+    // If formation is not available, check for 'length'
+    const length = service.length;
+
+    // If length is available and not '0', use it for the carriages text
+    if (length && length !== '0') {
+        displayText = `${length} carriages`;
+    } else {
+        // If both formation is null and length is '0', set text to black
+        textColor = 'black';
+        displayText = '';
+    }
 }
 
-                        // Set carriages text and color
-                        section.querySelector('.carriages').style.color = textColor;
-                        section.querySelector('.carriages').textContent = displayText;
+// Set carriages text and color
+section.querySelector('.carriages').style.color = textColor;
+section.querySelector('.carriages').textContent = displayText;
 
                         // Handle reasons for delay or cancellation
                         handleReasons(service, section);

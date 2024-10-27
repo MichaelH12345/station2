@@ -182,27 +182,26 @@
 }
 
 /* White line positioning */
+/* White line positioning */
 .white-line {
   position: absolute;
-  left: 13px; /* Positioned 5px from the left edge of the container */
+  left: 15px; /* Positioned 15px from the left edge of the page */
   top: -20px; /* Start slightly above the container */
   bottom: -20px; /* End slightly below the container */
-  width: 7px; /* Width of the white vertical line */
+  width: 5px; /* Width of the white vertical line */
   background-color: white;
 }
-
-
 
 /* Black circle positioning */
 .black-circle {
   position: absolute;
-  left: 4.75px; /* Positioned 5px from the left edge of the container */
+  left: 6.25px; /* Center the circle relative to the white line */
   top: 50%;
   width: 12px; /* Diameter of the black circle */
   height: 12px; /* Diameter of the black circle */
   border-radius: 50%;
   background-color: black;
-  border: 7px solid white; /* White outline */
+  border: 5px solid white; /* White outline */
   transform: translateY(-50%);
   z-index: 1; /* Ensure the circle is on top */
 }
@@ -210,13 +209,14 @@
 /* White rectangle positioning */
 .white-rectangle {
   position: absolute;
-  left: 5px; /* Positioned 5px from the left edge of the container */
+  left: 7.5px; /* Center the rectangle relative to the white line */
   top: 0;
   bottom: 0;
-  width: 23px; /* Width for the last point's rectangle */
+  width: 19px; /* Width for the last point's rectangle */
   background-color: white;
   border-radius: 5px;
 }
+
 
 /* Hide line and circle for the last point */
 .calling-point.last .white-line, 

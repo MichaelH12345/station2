@@ -736,43 +736,49 @@ function handleApiResponse(apiResponse) {
     let previousMessageStatus = null;  // Variable to store the previous message status
 
         // Function to fetch the data and update the iframe source dynamically
-  let previousNrccMessages = null;  // Variable to store the previous nrccMessages
+let previousNrccMessages = null;  // Variable to store the previous nrccMessages
 
-        // Function to fetch the data and update the iframe source dynamically
-        function checkForMessages() {
-            fetch('https://national-rail-api.davwheat.dev/staffdepartures/LIV?expand=true')  // Replace 'WAT' with the relevant station CRS code
-                .then(response => response.json())
-                .then(data => {
-                    const nrccMessages = data.nrccMessages;
-                    const hasMessages = nrccMessages && nrccMessages.length > 0;
+// Function to fetch the data and update the iframe source dynamically
+function checkForMessages() {
+    fetch('https://national-rail-api.davwheat.dev/staffdepartures/LIV?expand=true')  // Replace 'LIV' with the relevant station CRS code
+        .then(response => response.json())
+        .then(data => {
+            const nrccMessages = data.nrccMessages;
+            const hasMessages = nrccMessages && nrccMessages.length > 0;
 
-                        // Clear iframe src and then update to force refresh
-                        iframe.src = ''; // Clear the current source
+            // Only update if the nrccMessages have changed
+            if (JSON.stringify(nrccMessages) !== JSON.stringify(previousNrccMessages)) {
+                const iframe = document.getElementById('iframe');  // Get the iframe element
 
-                        // Reassign the new source based on the message status
-                        if (hasMessages) {
-                            // If there are messages, show the first URL in the iframe
-                            console.log("Messages found, loading notices...");
-                            iframe.src = 'https://michaelh12345.github.io/notices/';
-                        } else {
-                            // If no messages, show the second URL in the iframe
-                            console.log("No messages found, loading adverts...");
-                            iframe.src = 'https://michaelh12345.github.io/depart_screen_adverts/';
-                        }
+                // Clear iframe src and then update to force refresh
+                iframe.src = ''; // Clear the current source
 
-                        // Update the previous nrccMessages to the current one
-                        previousNrccMessages = nrccMessages;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    // In case of an error, keep the iframe empty or display a fallback message
-                    const iframe = document.getElementById('iframe');
-                    iframe.src = '';  // Clear iframe on error
-                });
+                // Reassign the new source based on the message status
+                if (hasMessages) {
+                    // If there are messages, show the first URL in the iframe
+                    console.log("Messages found, loading notices...");
+                    iframe.src = 'https://michaelh12345.github.io/notices/';
+                } else {
+                    // If no messages, show the second URL in the iframe
+                    console.log("No messages found, loading adverts...");
+                    iframe.src = 'https://michaelh12345.github.io/depart_screen_adverts/';
+                }
 
-        // Initial check on page load
-        checkForMessages();
+                // Update the previous nrccMessages to the current one
+                previousNrccMessages = nrccMessages;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            // In case of an error, keep the iframe empty or display a fallback message
+            const iframe = document.getElementById('iframe');
+            iframe.src = '';  // Clear iframe on error
+        });
+}
+
+// Initial check on page load
+checkForMessages();
+
 
 
 

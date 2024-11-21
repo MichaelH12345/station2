@@ -12,6 +12,7 @@
             font-weight: normal;
             font-style: normal;
         }
+        
         a {
     color: white;  /* Set the link color to white */
     text-decoration: none;  /* Remove underline */
@@ -277,9 +278,6 @@
     border-left: 5px solid yellow;
 }
 
-
-
- 
             .notices {
             font-family: BlackBox, sans-serif;
             position: absolute;
@@ -309,22 +307,24 @@
         .current-time {
             font-family: Arial, sans-serif;
             font-weight: bold;
-            font-size: 150px;
-            color: white;
+            font-size: 100px;
+            color: yellow;
             text-align: center;
             position: absolute;
-            bottom: 65px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            bottom: -82.5px;
             left: 0;
             width: 100%;
+            z-index: 5;
         }
 
 .section iframe {
     position: absolute;
-    top: 115px; /* 75 pixels from the top of the page */
-    bottom: 300px; /* 50 pixels from the bottom of the page */
+    top: 0px; /* 75 pixels from the top of the page */
+    bottom: 0px; /* 50 pixels from the bottom of the page */
     left: 0; /* Align with the left edge of the section */
     width: 100%; /* Full width of the section */
-    height: 62.5%; /* Full width of the section */
+    height: 100%; /* Full width of the section */
     border: none; /* Remove the default border */
     overflow: hidden; /* Ensure no scrollbars appear */
     z-index: 0; /* Set the iframe to be the bottom layer */
@@ -370,9 +370,10 @@
     </div>
         <!-- Section 3 -->
         <div class="section" data-index="5">
-            <div class="notices">Information</div>
-                        <iframe src="https://michaelh12345.github.io/notices/"></iframe>
-            <div class="current-time" id="current-time"></div>
+            <div class="notices"></div>
+                         <iframe id="iframe" src="https://michaelh12345.github.io/depart_screen_adverts/" width="100%" height="100%"></iframe>
+
+                                    <div class="current-time" id="current-time"></div>
         </div>
 </div>
 
@@ -730,6 +731,57 @@ function handleApiResponse(apiResponse) {
             // Update station name in the footer
             const stationName = data.locationName || '';
             document.getElementById('station-name').textContent = `Welcome to ${stationName} Station`;
+            
+
+    let previousMessageStatus = null;  // Variable to store the previous message status
+
+        // Function to fetch the data and update the iframe source dynamically
+  let previousNrccMessages = null;  // Variable to store the previous nrccMessages
+
+        // Function to fetch the data and update the iframe source dynamically
+        function checkForMessages() {
+            fetch('https://national-rail-api.davwheat.dev/staffdepartures/LIV?expand=true')  // Replace 'WAT' with the relevant station CRS code
+                .then(response => response.json())
+                .then(data => {
+                    const nrccMessages = data.nrccMessages;
+                    const hasMessages = nrccMessages && nrccMessages.length > 0;
+
+                    // Only update if the nrccMessages have changed
+                    if (JSON.stringify(nrccMessages) !== JSON.stringify(previousNrccMessages)) {
+                        const iframe = document.getElementById('iframe');  // Get the iframe element
+
+                        // Clear iframe src and then update to force refresh
+                        iframe.src = ''; // Clear the current source
+
+                        // Reassign the new source based on the message status
+                        if (hasMessages) {
+                            // If there are messages, show the first URL in the iframe
+                            console.log("Messages found, loading notices...");
+                            iframe.src = 'https://michaelh12345.github.io/notices/';
+                        } else {
+                            // If no messages, show the second URL in the iframe
+                            console.log("No messages found, loading adverts...");
+                            iframe.src = 'https://michaelh12345.github.io/depart_screen_adverts/';
+                        }
+
+                        // Update the previous nrccMessages to the current one
+                        previousNrccMessages = nrccMessages;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    // In case of an error, keep the iframe empty or display a fallback message
+                    const iframe = document.getElementById('iframe');
+                    iframe.src = '';  // Clear iframe on error
+                });
+        }
+
+        // Check for messages every 10 seconds
+        setInterval(checkForMessages, 30000);  // 10000 milliseconds = 10 seconds
+
+        // Initial check on page load
+        checkForMessages();
+
 
 
             // Check if data has a property named 'trainServices'
@@ -958,7 +1010,7 @@ section.querySelector('.carriages').textContent = displayText;
     // Call the initialize function and start updating
     window.onload = function() {
         initialize().then(() => {
-            const crsCode = "CAR"; // You can change this to any valid CRS code
+            const crsCode = "LIV"; // You can change this to any valid CRS code
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code
         });
     };

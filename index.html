@@ -746,10 +746,6 @@ function handleApiResponse(apiResponse) {
                     const nrccMessages = data.nrccMessages;
                     const hasMessages = nrccMessages && nrccMessages.length > 0;
 
-                    // Only update if the nrccMessages have changed
-                    if (JSON.stringify(nrccMessages) !== JSON.stringify(previousNrccMessages)) {
-                        const iframe = document.getElementById('iframe');  // Get the iframe element
-
                         // Clear iframe src and then update to force refresh
                         iframe.src = ''; // Clear the current source
 
@@ -774,10 +770,6 @@ function handleApiResponse(apiResponse) {
                     const iframe = document.getElementById('iframe');
                     iframe.src = '';  // Clear iframe on error
                 });
-        }
-
-        // Check for messages every 10 seconds
-        setInterval(checkForMessages, 120000);  // 1200000 milliseconds = 10 seconds
 
         // Initial check on page load
         checkForMessages();

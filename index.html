@@ -958,7 +958,7 @@ section.querySelector('.carriages').textContent = displayText;
     // Call the initialize function and start updating
     window.onload = function() {
         initialize().then(() => {
-            const crsCode = "CAR"; // You can change this to any valid CRS code
+            const crsCode = "YRK"; // You can change this to any valid CRS code
             startUpdating(crsCode); // Start updating departures and calling points for the CRS code
         });
     };
@@ -982,7 +982,7 @@ section.querySelector('.carriages').textContent = displayText;
 
     // Function to fetch the data and update the iframe source on script launch
 function checkForMessages() {
-    fetch('https://national-rail-api.davwheat.dev/staffdepartures/LSK?expand=true')  // Replace 'LSK' with the relevant station CRS code
+    fetch('https://national-rail-api.davwheat.dev/staffdepartures/YRK?expand=true')  // Replace 'LSK' with the relevant station CRS code
         .then(response => response.json())
         .then(data => {
             const nrccMessages = data.nrccMessages;  // Access the nrccMessages array
